@@ -1,0 +1,55 @@
+---
+const features = [
+  {
+    title: 'Classic Mode',
+    desc: 'The traditional 25/5 rhythm. Perfect for getting started.',
+    icon: '⏱️',
+    color: 'group-hover:text-violet-400'
+  },
+  {
+    title: 'Deep Focus',
+    desc: 'Extended 50min sessions for complex problem solving.',
+    icon: '🧠',
+    color: 'group-hover:text-cyan-400'
+  },
+  {
+    title: 'Ultra Focus',
+    desc: '90min blocks inspired by ultradian rhythms.',
+    icon: '⚡',
+    color: 'group-hover:text-amber-400'
+  }
+];
+---
+
+<section class="py-32 px-6 max-w-7xl mx-auto">
+  <div class="grid md:grid-cols-3 gap-8">
+    {
+      features.map(feature => (
+        <div class="gsap-feature group p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors duration-300">
+          <div class="text-4xl mb-6">{feature.icon}</div>
+          <h3 class={`text-xl font-display font-bold mb-3 text-white ${feature.color} transition-colors`}>{feature.title}</h3>
+          <p class="text-gray-400 leading-relaxed">{feature.desc}</p>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.from('.gsap-feature', {
+    scrollTrigger: {
+      trigger: '.gsap-feature',
+      start: 'top 85%'
+    },
+    y: 50,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.2,
+    ease: 'power2.out'
+  });
+</script>

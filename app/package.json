@@ -1,14 +1,39 @@
 {
   "name": "focusly",
-  "module": "index.ts",
-  "type": "module",
+  "version": "1.0.0",
+  "description": "A minimal productivity app focused on deep work",
+  "main": "src/main/main.js",
   "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "dev": "electron . --enable-logging"
+  },
+  "build": {
+    "appId": "com.focusly.app",
+    "productName": "Focusly",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "src/assets/icon.png"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "src/assets/icon.png"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "src/assets/icon.png"
+    }
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "electron-builder": "^26.4.0"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
   },
   "dependencies": {
     "electron": "^40.1.0",

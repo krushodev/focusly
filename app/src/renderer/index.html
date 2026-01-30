@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Focusly</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  </head>
+  <body data-theme="dark">
+    <div class="app-wrapper">
+      <!-- Title Bar -->
+      <header class="titlebar">
+        <div class="drag-region">
+          <span class="app-logo">◉</span>
+          <span class="app-name">Focusly</span>
+        </div>
+        <div class="window-controls">
+          <button id="btn-min" class="control-btn" title="Minimize">─</button>
+          <button id="btn-max" class="control-btn" title="Maximize">□</button>
+          <button id="btn-close" class="control-btn close-btn" title="Close">×</button>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="app-container">
+        <!-- Mode Selector -->
+        <nav class="modes">
+          <button class="mode-btn active" data-mode="classic">Classic</button>
+          <button class="mode-btn" data-mode="deep">Deep Focus</button>
+          <button class="mode-btn" data-mode="ultra">Ultra</button>
+          <button class="mode-btn" data-mode="custom">Custom</button>
+        </nav>
+
+        <!-- Cycle Indicator -->
+        <div class="cycle-indicator" id="cycle-indicator">
+          <span class="cycle-dot active"></span>
+          <span class="cycle-dot"></span>
+          <span class="cycle-dot"></span>
+          <span class="cycle-dot"></span>
+        </div>
+
+        <!-- Timer Display -->
+        <div class="timer-wrapper">
+          <svg class="progress-ring" viewBox="0 0 260 260">
+            <circle class="ring-bg" r="120" cx="130" cy="130" />
+            <circle class="ring-progress" r="120" cx="130" cy="130" />
+          </svg>
+          <div class="timer-content">
+            <div class="time-display" id="time-display">25:00</div>
+            <div class="status-label" id="status-label">Ready to Flow</div>
+            <div class="session-type" id="session-type">Focus Session</div>
+          </div>
+        </div>
+
+        <!-- Main Controls -->
+        <div class="controls">
+          <button id="btn-main" class="btn btn-primary">Start Focus</button>
+          <button id="btn-reset" class="btn btn-secondary">Reset</button>
+          <button id="btn-skip" class="btn btn-icon" title="Skip to next">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 4 15 12 5 20 5 4"></polygon>
+              <line x1="19" y1="5" x2="19" y2="19"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Footer Controls -->
+        <div class="footer-controls">
+          <button id="btn-sound" class="icon-btn" title="Sound Settings">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18V5l12-2v13"></path>
+              <circle cx="6" cy="18" r="3"></circle>
+              <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+          </button>
+          <button id="btn-theme" class="icon-btn" title="Theme Settings">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+          <button id="btn-settings" class="icon-btn" title="Settings">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+              ></path>
+            </svg>
+          </button>
+          <button id="btn-history" class="icon-btn" title="History">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </button>
+        </div>
+      </main>
+
+      <!-- Sound Panel -->
+      <div class="panel sound-panel" id="sound-panel">
+        <div class="panel-header">
+          <h3>Ambient Sounds</h3>
+          <button class="panel-close" data-panel="sound-panel">×</button>
+        </div>
+        <div class="panel-content">
+          <div class="sound-grid" id="sound-grid"></div>
+          <div class="volume-control">
+            <label>Ambient Volume</label>
+            <input type="range" id="ambient-volume" min="0" max="100" value="50" />
+          </div>
+          <div class="volume-control">
+            <label>Alarm Volume</label>
+            <input type="range" id="alarm-volume" min="0" max="100" value="70" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme Panel -->
+      <div class="panel theme-panel" id="theme-panel">
+        <div class="panel-header">
+          <h3>Appearance</h3>
+          <button class="panel-close" data-panel="theme-panel">×</button>
+        </div>
+        <div class="panel-content">
+          <div class="theme-section">
+            <label>Theme</label>
+            <div class="theme-toggle">
+              <button class="theme-btn active" data-theme="dark">Dark</button>
+              <button class="theme-btn" data-theme="light">Light</button>
+            </div>
+          </div>
+          <div class="theme-section">
+            <label>Accent Color</label>
+            <div class="color-grid" id="color-grid"></div>
+          </div>
+          <div class="theme-section">
+            <label>Background</label>
+            <div class="gradient-grid" id="gradient-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Panel -->
+      <div class="panel settings-panel" id="settings-panel">
+        <div class="panel-header">
+          <h3>Settings</h3>
+          <button class="panel-close" data-panel="settings-panel">×</button>
+        </div>
+        <div class="panel-content">
+          <div class="settings-section">
+            <h4>Custom Timer</h4>
+            <div class="setting-row">
+              <label>Work Duration (min)</label>
+              <input type="number" id="custom-work" min="1" max="180" value="25" />
+            </div>
+            <div class="setting-row">
+              <label>Short Break (min)</label>
+              <input type="number" id="custom-break" min="1" max="60" value="5" />
+            </div>
+            <div class="setting-row">
+              <label>Long Break (min)</label>
+              <input type="number" id="custom-long-break" min="1" max="60" value="15" />
+            </div>
+          </div>
+          <div class="settings-section">
+            <h4>Cycles</h4>
+            <div class="setting-row">
+              <label>Sessions before long break</label>
+              <input type="number" id="cycles-count" min="1" max="10" value="4" />
+            </div>
+          </div>
+          <div class="settings-section">
+            <h4>Presets</h4>
+            <div class="presets-list" id="presets-list"></div>
+            <button class="btn btn-secondary btn-small" id="btn-save-preset">Save Current as Preset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- History Panel -->
+      <div class="panel history-panel" id="history-panel">
+        <div class="panel-header">
+          <h3>Session History</h3>
+          <button class="panel-close" data-panel="history-panel">×</button>
+        </div>
+        <div class="panel-content">
+          <div class="history-stats" id="history-stats">
+            <div class="stat-card">
+              <span class="stat-value" id="total-sessions">0</span>
+              <span class="stat-label">Total Sessions</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value" id="total-time">0h</span>
+              <span class="stat-label">Focus Time</span>
+            </div>
+          </div>
+          <div class="history-list" id="history-list"></div>
+        </div>
+      </div>
+
+      <!-- Overlay for panels -->
+      <div class="panel-overlay" id="panel-overlay"></div>
+    </div>
+
+    <script src="app-simple.js"></script>
+  </body>
+</html>
