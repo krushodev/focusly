@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain, Notification, screen } = require('electron');
 const path = require('path');
 
-// Fix GPU acceleration issues
 app.commandLine.appendSwitch('disable-gpu');
 app.commandLine.appendSwitch('disable-gpu-compositing');
 app.commandLine.appendSwitch('disable-software-rasterizer');
@@ -38,12 +37,10 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
 
-  // Show window when ready to prevent visual flash
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
   });
 
-  // Track maximize state
   mainWindow.on('maximize', () => {
     isMaximized = true;
     mainWindow.webContents.send('window-maximized', true);
@@ -54,13 +51,11 @@ function createWindow() {
     mainWindow.webContents.send('window-maximized', false);
   });
 
-  // Handle resize for responsive UI
   mainWindow.on('resize', () => {
     const [width, height] = mainWindow.getSize();
     mainWindow.webContents.send('window-resized', { width, height });
   });
 
-  // Uncomment for debug:
   // mainWindow.webContents.openDevTools({ mode: 'detach' });
 }
 
@@ -73,8 +68,6 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
-
-// ===== IPC HANDLERS =====
 
 // Window controls
 ipcMain.on('window-minimize', () => {
@@ -101,7 +94,6 @@ ipcMain.on('window-fullscreen', () => {
   }
 });
 
-// Get window state
 ipcMain.handle('get-window-state', () => {
   if (!mainWindow) return { isMaximized: false, isFullScreen: false };
   return {
@@ -110,7 +102,6 @@ ipcMain.handle('get-window-state', () => {
   };
 });
 
-// Notifications
 ipcMain.on('notify', (event, { title, body }) => {
   const notification = new Notification({
     title: title || 'Focusly',
@@ -121,7 +112,6 @@ ipcMain.on('notify', (event, { title, body }) => {
 
   notification.show();
 
-  // Click notification to focus window
   notification.on('click', () => {
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore();
