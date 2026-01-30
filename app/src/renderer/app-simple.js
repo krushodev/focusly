@@ -143,6 +143,37 @@ class TimerEngine {
     this.onTick(this.timeLeft, this.totalTime);
   }
 
+  skip() {
+    const wasActive = this.isActive;
+    clearInterval(this.timerId);
+    this.isActive = false;
+    this.isPaused = false;
+
+    // Don't save session when skipping
+    if (!this.isBreak) {
+      this.isBreak = true;
+      this.timeLeft = this.getBreakDuration();
+      this.totalTime = this.timeLeft;
+    } else {
+      this.isBreak = false;
+      if (this.currentCycle >= this.cyclesBeforeLongBreak) {
+        this.currentCycle = 1;
+      } else {
+        this.currentCycle++;
+      }
+      this.timeLeft = this.getWorkDuration();
+      this.totalTime = this.timeLeft;
+    }
+
+    this.onStateChange(this.getState());
+    this.onTick(this.timeLeft, this.totalTime);
+
+    // Auto-start the next phase if timer was active
+    if (wasActive) {
+      this.start();
+    }
+  }
+
   getState() {
     return {
       mode: this.mode,
@@ -172,38 +203,49 @@ class SoundManager {
     this.ambientVolume = 0.5;
     this.alarmVolume = 0.7;
     this.isPlaying = false;
-    this.preloadAlarm();
-  }
 
-  preloadAlarm() {
+    this.ambientSounds = {
+      none: { name: 'None', icon: '🔇', url: null },
+      rain: { name: 'Rain', icon: '🌧️', url: 'https://cdn.pixabay.com/audio/2022/05/13/audio_257112c5d1.mp3' },
+      whitenoise: { name: 'White Noise', icon: '📻', url: 'https://cdn.pixabay.com/audio/2022/03/10/audio_6c4f5f2c6a.mp3' },
+      forest: { name: 'Forest', icon: '🌲', url: 'https://cdn.pixabay.com/audio/2022/08/02/audio_884fe92c21.mp3' },
+      coffeeshop: { name: 'Coffee Shop', icon: '☕', url: 'https://cdn.pixabay.com/audio/2021/08/08/audio_dc39bde808.mp3' }
+    };
+
+    // Preload alarm sound
     this.alarmAudio = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b87c5.mp3');
     this.alarmAudio.volume = this.alarmVolume;
   }
 
   setAmbientSound(soundKey) {
-    const sounds = {
-      rain: 'https://cdn.pixabay.com/audio/2022/05/13/audio_257112c5d1.mp3',
-      whitenoise: 'https://cdn.pixabay.com/audio/2022/03/10/audio_6c4f5f2c6a.mp3',
-      forest: 'https://cdn.pixabay.com/audio/2022/08/02/audio_884fe92c21.mp3',
-      coffeeshop: 'https://cdn.pixabay.com/audio/2021/08/08/audio_dc39bde808.mp3'
-    };
-
-    if (!sounds[soundKey]) return;
+    if (!this.ambientSounds[soundKey]) return;
 
     const wasPlaying = this.isPlaying;
 
+    // Stop current sound
     if (this.ambientAudio) {
       this.ambientAudio.pause();
       this.ambientAudio = null;
     }
 
     this.currentAmbient = soundKey;
-    this.ambientAudio = new Audio(sounds[soundKey]);
-    this.ambientAudio.loop = true;
-    this.ambientAudio.volume = this.ambientVolume;
 
-    if (wasPlaying) {
-      this.playAmbient();
+    // If 'none' is selected, don't create audio element
+    if (soundKey === 'none') {
+      this.isPlaying = false;
+      return;
+    }
+
+    // Create new audio element
+    const soundUrl = this.ambientSounds[soundKey].url;
+    if (soundUrl) {
+      this.ambientAudio = new Audio(soundUrl);
+      this.ambientAudio.loop = true;
+      this.ambientAudio.volume = this.ambientVolume;
+
+      if (wasPlaying) {
+        this.playAmbient();
+      }
     }
   }
 
@@ -222,8 +264,20 @@ class SoundManager {
   }
 
   playAmbient() {
+    // Don't play if 'none' is selected
+    if (this.currentAmbient === 'none') {
+      this.isPlaying = false;
+      return;
+    }
+
+    if (!this.ambientAudio && this.currentAmbient) {
+      this.setAmbientSound(this.currentAmbient);
+    }
+
     if (this.ambientAudio) {
-      this.ambientAudio.play().catch(e => console.warn('Could not play ambient sound:', e));
+      this.ambientAudio.play().catch(e => {
+        console.warn('Could not play ambient sound:', e);
+      });
       this.isPlaying = true;
     }
   }
@@ -231,6 +285,14 @@ class SoundManager {
   pauseAmbient() {
     if (this.ambientAudio) {
       this.ambientAudio.pause();
+      this.isPlaying = false;
+    }
+  }
+
+  stopAmbient() {
+    if (this.ambientAudio) {
+      this.ambientAudio.pause();
+      this.ambientAudio.currentTime = 0;
       this.isPlaying = false;
     }
   }
@@ -249,6 +311,10 @@ class SoundManager {
       this.alarmAudio.currentTime = 0;
       this.alarmAudio.play().catch(e => console.warn('Could not play alarm:', e));
     }
+  }
+
+  getAmbientSounds() {
+    return this.ambientSounds;
   }
 
   getCurrentAmbient() {
@@ -318,13 +384,13 @@ class Store {
   }
 }
 
-// ===== MAIN APP =====
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize
   const store = new Store();
   store.init();
 
   const soundManager = new SoundManager();
+  // Initialize with default sound
   soundManager.setAmbientSound(store.get('ambientSound') || 'rain');
   soundManager.setAmbientVolume(store.get('ambientVolume'));
   soundManager.setAlarmVolume(store.get('alarmVolume'));
@@ -455,7 +521,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Control ambient sound
-    if (state.isActive && !state.isPaused && soundManager.getCurrentAmbient()) {
+    if (state.isActive && !state.isPaused) {
+      // Ensure ambient sound is set
+      if (!soundManager.getCurrentAmbient()) {
+        soundManager.setAmbientSound('rain');
+      }
       soundManager.playAmbient();
     } else {
       soundManager.pauseAmbient();
@@ -506,13 +576,27 @@ document.addEventListener('DOMContentLoaded', () => {
   // Event Listeners
   els.btnMain.addEventListener('click', () => timer.toggle());
   els.btnReset.addEventListener('click', () => timer.fullReset());
-  els.btnSkip.addEventListener('click', () => timer.complete());
+  els.btnSkip.addEventListener('click', () => timer.skip());
 
   els.modeBtns.forEach(btn => {
     btn.addEventListener('click', () => switchMode(btn.dataset.mode));
   });
 
-  els.btnSound.addEventListener('click', () => openPanel('sound-panel'));
+  els.btnSound.addEventListener('click', () => {
+    // Toggle ambient sound on/off
+    if (soundManager.isAmbientPlaying()) {
+      soundManager.pauseAmbient();
+      els.btnSound.classList.remove('active');
+    } else {
+      if (!soundManager.getCurrentAmbient()) {
+        soundManager.setAmbientSound('rain');
+      }
+      soundManager.playAmbient();
+      els.btnSound.classList.add('active');
+    }
+    // Also open panel
+    openPanel('sound-panel');
+  });
   els.btnTheme.addEventListener('click', () => openPanel('theme-panel'));
   els.btnSettings.addEventListener('click', () => openPanel('settings-panel'));
   els.btnHistory.addEventListener('click', () => openPanel('history-panel'));
@@ -530,12 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Sound panel
   function initSoundPanel() {
-    const sounds = {
-      rain: { name: 'Rain', icon: '🌧️' },
-      whitenoise: { name: 'White Noise', icon: '📻' },
-      forest: { name: 'Forest', icon: '🌲' },
-      coffeeshop: { name: 'Coffee Shop', icon: '☕' }
-    };
+    const sounds = soundManager.getAmbientSounds();
 
     els.soundGrid.innerHTML = '';
 
@@ -557,6 +636,17 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.classList.add('active');
         soundManager.setAmbientSound(key);
         store.update('ambientSound', key);
+
+        // Play preview for 2 seconds if timer is not active (except for 'none')
+        const timerState = timer.getState();
+        if (!timerState.isActive && key !== 'none') {
+          soundManager.playAmbient();
+          setTimeout(() => soundManager.pauseAmbient(), 2000);
+        } else if (timerState.isActive) {
+          // Auto-play if timer is active
+          soundManager.playAmbient();
+          els.btnSound.classList.add('active');
+        }
       });
 
       els.soundGrid.appendChild(btn);
