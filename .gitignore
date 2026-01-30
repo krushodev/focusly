@@ -1,0 +1,40 @@
+# dependencies
+node_modules/
+
+# env
+.env
+.env.*
+
+# build
+dist/
+build/
+out/
+release/
+
+# electron
+*.exe
+*.dmg
+*.pkg
+*.AppImage
+
+# astro / vite
+.astro/
+.vite/
+
+# logs
+*.log
+
+# coverage
+coverage/
+
+# cache
+.cache/
+.tmp/
+
+# editors
+.vscode/
+.idea/
+
+# os
+.DS_Store
+Thumbs.db

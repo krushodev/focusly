@@ -1,0 +1,17 @@
+{
+  "name": "focusly",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "electron-builder": "^26.4.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "electron": "^40.1.0",
+    "gsap": "^3.14.2"
+  }
+}
