@@ -7,20 +7,14 @@ const features = [
     gradient: 'from-violet-500 to-violet-600'
   },
   {
-    title: 'Ambient Sounds',
-    desc: 'Rain, forest, coffee shop, or white noise. Create your perfect focus environment.',
-    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>`,
-    gradient: 'from-cyan-500 to-cyan-600'
-  },
-  {
     title: 'Session Tracking',
     desc: 'Track your focus sessions and see your productivity trends over time.',
     icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>`,
-    gradient: 'from-emerald-500 to-emerald-600'
+    gradient: 'from-cyan-500 to-cyan-600'
   },
   {
-    title: 'Custom Themes',
-    desc: 'Dark and light modes with customizable accent colors to match your style.',
+    title: 'Dark & Light Themes',
+    desc: 'Beautiful violet & cyan palette with dark and light modes to match your preference.',
     icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>`,
     gradient: 'from-pink-500 to-pink-600'
   },
@@ -28,12 +22,18 @@ const features = [
     title: 'Smart Breaks',
     desc: 'Automatic short and long breaks based on your session count. Stay refreshed.',
     icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
-    gradient: 'from-amber-500 to-amber-600'
+    gradient: 'from-emerald-500 to-emerald-600'
   },
   {
     title: 'Desktop Notifications',
-    desc: 'Get notified when sessions end. Never miss a break or focus period.',
+    desc: 'Get notified with a ring sound when sessions end. Never miss a break or focus period.',
     icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>`,
+    gradient: 'from-amber-500 to-amber-600'
+  },
+  {
+    title: 'Smooth Animations',
+    desc: 'Beautiful GSAP-powered animations with breathing effects and microinteractions.',
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`,
     gradient: 'from-blue-500 to-blue-600'
   }
 ];
@@ -52,7 +52,7 @@ const features = [
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       {
         features.map(feature => (
-          <div class="gsap-feature group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300">
+          <div class="feature-card group p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300">
             <div class={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center text-white mb-5`}>
               <Fragment set:html={feature.icon} />
             </div>
@@ -71,15 +71,23 @@ const features = [
 
   gsap.registerPlugin(ScrollTrigger);
 
-  gsap.from('.gsap-feature', {
-    scrollTrigger: {
-      trigger: '#features',
-      start: 'top 80%'
-    },
-    y: 40,
-    opacity: 0,
-    duration: 0.6,
-    stagger: 0.1,
-    ease: 'power2.out'
-  });
+  const features = document.querySelectorAll('.feature-card');
+
+  if (features.length > 0) {
+    gsap.set(features, { opacity: 1, y: 0 });
+
+    gsap.from(features, {
+      scrollTrigger: {
+        trigger: '#features',
+        start: 'top 85%',
+        once: true
+      },
+      y: 30,
+      opacity: 0,
+      duration: 0.5,
+      stagger: 0.08,
+      ease: 'power2.out',
+      clearProps: 'all'
+    });
+  }
 </script>

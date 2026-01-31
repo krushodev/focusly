@@ -1,46 +1,53 @@
-# Astro Starter Kit: Basics
+# Focusly Landing Page
 
-```sh
-bun create astro@latest -- --template basics
+The marketing landing page for Focusly — a minimalist Pomodoro timer for deep work.
+
+## Tech Stack
+
+- **Astro** — Static site generator
+- **TailwindCSS** — Utility-first CSS framework
+- **GSAP** — Animation library
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── Hero.astro        # Hero section with CTA
+│   ├── Features.astro    # Features showcase
+│   ├── HowItWorks.astro  # How it works section
+│   ├── Showcase.astro    # App showcase
+│   ├── CTA.astro         # Call to action
+│   └── Footer.astro      # Footer
+├── layouts/
+│   └── Layout.astro      # Base layout
+├── pages/
+│   └── index.astro       # Home page
+├── styles/
+│   └── global.css        # Global styles
+└── public/
+    ├── logo.png          # App logo
+    └── favicon.svg       # Favicon
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Commands
 
-## 🚀 Project Structure
+| Command       | Action                               |
+| ------------- | ------------------------------------ |
+| `bun install` | Install dependencies                 |
+| `bun dev`     | Start dev server at `localhost:4321` |
+| `bun build`   | Build for production to `./dist/`    |
+| `bun preview` | Preview production build locally     |
 
-Inside of your Astro project, you'll see the following folders and files:
+## Development
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+```bash
+bun install
+bun dev
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Build
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```bash
+bun build
+```
