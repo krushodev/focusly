@@ -2,6 +2,7 @@
   "name": "focusly",
   "version": "1.0.0",
   "description": "A minimal productivity app focused on deep work",
+  "author": "Focusly Team",
   "main": "src/main/main.js",
   "private": true,
   "scripts": {
@@ -37,14 +38,11 @@
           ]
         }
       ],
-      "icon": "src/assets/logo.png",
       "artifactName": "${productName}-${version}-Windows-Setup.${ext}"
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "installerIcon": "src/assets/logo.png",
-      "uninstallerIcon": "src/assets/logo.png"
+      "allowToChangeInstallationDirectory": true
     },
     "mac": {
       "target": [
@@ -89,10 +87,10 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "electron": "^40.1.0",
     "electron-builder": "^26.4.0"
   },
   "dependencies": {
-    "electron": "^40.1.0",
     "gsap": "^3.14.2"
   }
 }
