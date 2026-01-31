@@ -197,63 +197,12 @@ class TimerEngine {
 // ===== SOUND MANAGER =====
 class SoundManager {
   constructor() {
-    this.ambientAudio = null;
     this.alarmAudio = null;
-    this.currentAmbient = null;
-    this.ambientVolume = 0.5;
     this.alarmVolume = 0.7;
-    this.isPlaying = false;
 
-    this.ambientSounds = {
-      none: { name: 'None', icon: '🔇', url: null },
-      rain: { name: 'Rain', icon: '🌧️', url: 'https://cdn.pixabay.com/audio/2022/05/13/audio_257112c5d1.mp3' },
-      whitenoise: { name: 'White Noise', icon: '📻', url: 'https://cdn.pixabay.com/audio/2022/03/10/audio_6c4f5f2c6a.mp3' },
-      forest: { name: 'Forest', icon: '🌲', url: 'https://cdn.pixabay.com/audio/2022/08/02/audio_884fe92c21.mp3' },
-      coffeeshop: { name: 'Coffee Shop', icon: '☕', url: 'https://cdn.pixabay.com/audio/2021/08/08/audio_dc39bde808.mp3' }
-    };
-
-    // Preload alarm sound
+    // Preload ring/alarm sound for session completion
     this.alarmAudio = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b87c5.mp3');
     this.alarmAudio.volume = this.alarmVolume;
-  }
-
-  setAmbientSound(soundKey) {
-    if (!this.ambientSounds[soundKey]) return;
-
-    const wasPlaying = this.isPlaying;
-
-    // Stop current sound
-    if (this.ambientAudio) {
-      this.ambientAudio.pause();
-      this.ambientAudio = null;
-    }
-
-    this.currentAmbient = soundKey;
-
-    // If 'none' is selected, don't create audio element
-    if (soundKey === 'none') {
-      this.isPlaying = false;
-      return;
-    }
-
-    // Create new audio element
-    const soundUrl = this.ambientSounds[soundKey].url;
-    if (soundUrl) {
-      this.ambientAudio = new Audio(soundUrl);
-      this.ambientAudio.loop = true;
-      this.ambientAudio.volume = this.ambientVolume;
-
-      if (wasPlaying) {
-        this.playAmbient();
-      }
-    }
-  }
-
-  setAmbientVolume(volume) {
-    this.ambientVolume = Math.max(0, Math.min(1, volume));
-    if (this.ambientAudio) {
-      this.ambientAudio.volume = this.ambientVolume;
-    }
   }
 
   setAlarmVolume(volume) {
@@ -263,66 +212,11 @@ class SoundManager {
     }
   }
 
-  playAmbient() {
-    // Don't play if 'none' is selected
-    if (this.currentAmbient === 'none') {
-      this.isPlaying = false;
-      return;
-    }
-
-    if (!this.ambientAudio && this.currentAmbient) {
-      this.setAmbientSound(this.currentAmbient);
-    }
-
-    if (this.ambientAudio) {
-      this.ambientAudio.play().catch(e => {
-        console.warn('Could not play ambient sound:', e);
-      });
-      this.isPlaying = true;
-    }
-  }
-
-  pauseAmbient() {
-    if (this.ambientAudio) {
-      this.ambientAudio.pause();
-      this.isPlaying = false;
-    }
-  }
-
-  stopAmbient() {
-    if (this.ambientAudio) {
-      this.ambientAudio.pause();
-      this.ambientAudio.currentTime = 0;
-      this.isPlaying = false;
-    }
-  }
-
-  toggleAmbient() {
-    if (this.isPlaying) {
-      this.pauseAmbient();
-    } else {
-      this.playAmbient();
-    }
-    return this.isPlaying;
-  }
-
   playAlarm() {
     if (this.alarmAudio) {
       this.alarmAudio.currentTime = 0;
       this.alarmAudio.play().catch(e => console.warn('Could not play alarm:', e));
     }
-  }
-
-  getAmbientSounds() {
-    return this.ambientSounds;
-  }
-
-  getCurrentAmbient() {
-    return this.currentAmbient;
-  }
-
-  isAmbientPlaying() {
-    return this.isPlaying;
   }
 }
 
@@ -336,9 +230,6 @@ class Store {
       customLongBreak: 15,
       cyclesBeforeLongBreak: 4,
       theme: 'dark',
-      customColors: { primary: '#8b5cf6' },
-      ambientSound: 'rain',
-      ambientVolume: 0.5,
       alarmVolume: 0.7,
       history: [],
       presets: []
@@ -390,9 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
   store.init();
 
   const soundManager = new SoundManager();
-  // Initialize with default sound
-  soundManager.setAmbientSound(store.get('ambientSound') || 'rain');
-  soundManager.setAmbientVolume(store.get('ambientVolume'));
   soundManager.setAlarmVolume(store.get('alarmVolume'));
 
   // DOM Elements
@@ -404,22 +292,16 @@ document.addEventListener('DOMContentLoaded', () => {
     btnMain: document.getElementById('btn-main'),
     btnReset: document.getElementById('btn-reset'),
     btnSkip: document.getElementById('btn-skip'),
-    btnSound: document.getElementById('btn-sound'),
     btnTheme: document.getElementById('btn-theme'),
     btnSettings: document.getElementById('btn-settings'),
     btnHistory: document.getElementById('btn-history'),
     modeBtns: document.querySelectorAll('.mode-btn'),
     cycleIndicator: document.getElementById('cycle-indicator'),
-    soundPanel: document.getElementById('sound-panel'),
     themePanel: document.getElementById('theme-panel'),
     settingsPanel: document.getElementById('settings-panel'),
     historyPanel: document.getElementById('history-panel'),
     panelOverlay: document.getElementById('panel-overlay'),
-    soundGrid: document.getElementById('sound-grid'),
-    ambientVolume: document.getElementById('ambient-volume'),
     alarmVolume: document.getElementById('alarm-volume'),
-    colorGrid: document.getElementById('color-grid'),
-    gradientGrid: document.getElementById('gradient-grid'),
     themeBtns: document.querySelectorAll('.theme-btn'),
     customWork: document.getElementById('custom-work'),
     customBreak: document.getElementById('custom-break'),
@@ -519,17 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       els.ring.style.stroke = 'var(--primary)';
     }
-
-    // Control ambient sound
-    if (state.isActive && !state.isPaused) {
-      // Ensure ambient sound is set
-      if (!soundManager.getCurrentAmbient()) {
-        soundManager.setAmbientSound('rain');
-      }
-      soundManager.playAmbient();
-    } else {
-      soundManager.pauseAmbient();
-    }
   }
 
   function updateCycleIndicator(current, total) {
@@ -582,21 +453,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => switchMode(btn.dataset.mode));
   });
 
-  els.btnSound.addEventListener('click', () => {
-    // Toggle ambient sound on/off
-    if (soundManager.isAmbientPlaying()) {
-      soundManager.pauseAmbient();
-      els.btnSound.classList.remove('active');
-    } else {
-      if (!soundManager.getCurrentAmbient()) {
-        soundManager.setAmbientSound('rain');
-      }
-      soundManager.playAmbient();
-      els.btnSound.classList.add('active');
-    }
-    // Also open panel
-    openPanel('sound-panel');
-  });
   els.btnTheme.addEventListener('click', () => openPanel('theme-panel'));
   els.btnSettings.addEventListener('click', () => openPanel('settings-panel'));
   els.btnHistory.addEventListener('click', () => openPanel('history-panel'));
@@ -612,114 +468,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-max').addEventListener('click', () => window.api.maximize());
   document.getElementById('btn-close').addEventListener('click', () => window.api.close());
 
-  // Sound panel
-  function initSoundPanel() {
-    const sounds = soundManager.getAmbientSounds();
-
-    els.soundGrid.innerHTML = '';
-
-    Object.entries(sounds).forEach(([key, sound]) => {
-      const btn = document.createElement('button');
-      btn.className = 'sound-btn';
-      btn.dataset.sound = key;
-      btn.innerHTML = `
-        <span class="sound-icon">${sound.icon}</span>
-        <span class="sound-name">${sound.name}</span>
-      `;
-
-      if (store.get('ambientSound') === key) {
-        btn.classList.add('active');
-      }
-
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.sound-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        soundManager.setAmbientSound(key);
-        store.update('ambientSound', key);
-
-        // Play preview for 2 seconds if timer is not active (except for 'none')
-        const timerState = timer.getState();
-        if (!timerState.isActive && key !== 'none') {
-          soundManager.playAmbient();
-          setTimeout(() => soundManager.pauseAmbient(), 2000);
-        } else if (timerState.isActive) {
-          // Auto-play if timer is active
-          soundManager.playAmbient();
-          els.btnSound.classList.add('active');
-        }
-      });
-
-      els.soundGrid.appendChild(btn);
-    });
-
-    els.ambientVolume.value = store.get('ambientVolume') * 100;
-    els.alarmVolume.value = store.get('alarmVolume') * 100;
-
-    els.ambientVolume.addEventListener('input', e => {
-      const vol = e.target.value / 100;
-      soundManager.setAmbientVolume(vol);
-      store.update('ambientVolume', vol);
-    });
-
-    els.alarmVolume.addEventListener('input', e => {
-      const vol = e.target.value / 100;
-      soundManager.setAlarmVolume(vol);
-      store.update('alarmVolume', vol);
-    });
-  }
-
   // Theme panel
   function initThemePanel() {
-    const colors = {
-      purple: '#8b5cf6',
-      blue: '#3b82f6',
-      cyan: '#06b6d4',
-      green: '#10b981',
-      orange: '#f97316',
-      pink: '#ec4899',
-      red: '#ef4444',
-      yellow: '#eab308'
-    };
-
-    els.colorGrid.innerHTML = '';
-
-    Object.entries(colors).forEach(([key, color]) => {
-      const btn = document.createElement('button');
-      btn.className = 'color-btn';
-      btn.style.background = color;
-      btn.title = key;
-      btn.dataset.color = key;
-
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        // Apply color with higher specificity
-        const root = document.documentElement;
-        root.style.setProperty('--primary', color);
-        root.style.setProperty('--primary-glow', `${color}66`);
-
-        // Also apply to theme-specific selectors
-        const style = document.createElement('style');
-        style.textContent = `
-          [data-theme="light"] { --primary: ${color} !important; --primary-glow: ${color}66 !important; }
-          [data-theme="dark"] { --primary: ${color} !important; --primary-glow: ${color}66 !important; }
-        `;
-
-        // Remove old style if exists
-        const oldStyle = document.getElementById('custom-color-style');
-        if (oldStyle) oldStyle.remove();
-
-        style.id = 'custom-color-style';
-        document.head.appendChild(style);
-
-        // Save to store
-        store.update('customColors', { primary: color });
-      });
-
-      els.colorGrid.appendChild(btn);
-    });
-
     // Theme toggle
     els.themeBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -728,6 +478,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.setAttribute('data-theme', btn.dataset.theme);
         store.update('theme', btn.dataset.theme);
       });
+    });
+
+    // Alarm volume control
+    els.alarmVolume.value = store.get('alarmVolume') * 100;
+    els.alarmVolume.addEventListener('input', e => {
+      const vol = e.target.value / 100;
+      soundManager.setAlarmVolume(vol);
+      store.update('alarmVolume', vol);
     });
   }
 
@@ -830,33 +588,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Apply saved theme
     document.body.setAttribute('data-theme', store.get('theme'));
 
-    // Apply saved custom colors if any
-    const savedColors = store.get('customColors');
-    if (savedColors && savedColors.primary) {
-      const color = savedColors.primary;
-
-      // Apply color with higher specificity
-      const root = document.documentElement;
-      root.style.setProperty('--primary', color);
-      root.style.setProperty('--primary-glow', `${color}66`);
-
-      // Also apply to theme-specific selectors
-      const style = document.createElement('style');
-      style.textContent = `
-        [data-theme="light"] { --primary: ${color} !important; --primary-glow: ${color}66 !important; }
-        [data-theme="dark"] { --primary: ${color} !important; --primary-glow: ${color}66 !important; }
-      `;
-
-      style.id = 'custom-color-style';
-      document.head.appendChild(style);
-    }
-
     // Initial UI update
     els.display.textContent = timer.getFormattedTime();
     updateCycleIndicator(1, store.get('cyclesBeforeLongBreak'));
 
     // Initialize panels
-    initSoundPanel();
     initThemePanel();
     initSettingsPanel();
     updateHistoryUI();

@@ -12,7 +12,7 @@
       <!-- Title Bar -->
       <header class="titlebar">
         <div class="drag-region">
-          <span class="app-logo">◉</span>
+          <img src="../assets/logo.png" alt="Focusly" class="app-logo-img" />
           <span class="app-name">Focusly</span>
         </div>
         <div class="window-controls">
@@ -67,13 +67,6 @@
 
         <!-- Footer Controls -->
         <div class="footer-controls">
-          <button id="btn-sound" class="icon-btn" title="Sound Settings">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 18V5l12-2v13"></path>
-              <circle cx="6" cy="18" r="3"></circle>
-              <circle cx="18" cy="16" r="3"></circle>
-            </svg>
-          </button>
           <button id="btn-theme" class="icon-btn" title="Theme Settings">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="5"></circle>
@@ -104,25 +97,6 @@
         </div>
       </main>
 
-      <!-- Sound Panel -->
-      <div class="panel sound-panel" id="sound-panel">
-        <div class="panel-header">
-          <h3>Ambient Sounds</h3>
-          <button class="panel-close" data-panel="sound-panel">×</button>
-        </div>
-        <div class="panel-content">
-          <div class="sound-grid" id="sound-grid"></div>
-          <div class="volume-control">
-            <label>Ambient Volume</label>
-            <input type="range" id="ambient-volume" min="0" max="100" value="50" />
-          </div>
-          <div class="volume-control">
-            <label>Alarm Volume</label>
-            <input type="range" id="alarm-volume" min="0" max="100" value="70" />
-          </div>
-        </div>
-      </div>
-
       <!-- Theme Panel -->
       <div class="panel theme-panel" id="theme-panel">
         <div class="panel-header">
@@ -137,13 +111,9 @@
               <button class="theme-btn" data-theme="light">Light</button>
             </div>
           </div>
-          <div class="theme-section">
-            <label>Accent Color</label>
-            <div class="color-grid" id="color-grid"></div>
-          </div>
-          <div class="theme-section">
-            <label>Background</label>
-            <div class="gradient-grid" id="gradient-grid"></div>
+          <div class="volume-control">
+            <label>Notification Volume</label>
+            <input type="range" id="alarm-volume" min="0" max="100" value="70" />
           </div>
         </div>
       </div>

@@ -6,8 +6,12 @@
   "private": true,
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder",
-    "dev": "electron . --enable-logging"
+    "dev": "electron . --enable-logging",
+    "build": "electron-builder --win --mac --linux",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "build:all": "electron-builder --win --mac --linux"
   },
   "build": {
     "appId": "com.focusly.app",
@@ -19,16 +23,68 @@
       "src/**/*"
     ],
     "win": {
-      "target": "nsis",
-      "icon": "src/assets/icon.png"
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "src/assets/logo.png",
+      "artifactName": "${productName}-${version}-Windows-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "src/assets/logo.png",
+      "uninstallerIcon": "src/assets/logo.png"
     },
     "mac": {
-      "target": "dmg",
-      "icon": "src/assets/icon.png"
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "src/assets/logo.png",
+      "artifactName": "${productName}-${version}-macOS.${ext}",
+      "category": "public.app-category.productivity"
     },
     "linux": {
-      "target": "AppImage",
-      "icon": "src/assets/icon.png"
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "src/assets/logo.png",
+      "artifactName": "${productName}-${version}-Linux.${ext}",
+      "category": "Utility"
     }
   },
   "devDependencies": {

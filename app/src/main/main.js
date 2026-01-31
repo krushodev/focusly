@@ -32,7 +32,7 @@ function createWindow() {
       allowRunningInsecureContent: false,
       experimentalFeatures: false
     },
-    icon: path.join(__dirname, '../../assets/icon.png')
+    icon: path.join(__dirname, '../assets/logo.png')
   });
 
   mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
@@ -106,7 +106,7 @@ ipcMain.on('notify', (event, { title, body }) => {
   const notification = new Notification({
     title: title || 'Focusly',
     body: body || '',
-    icon: path.join(__dirname, '../../assets/icon.png'),
+    icon: path.join(__dirname, '../assets/logo.png'),
     silent: false
   });
 

@@ -1,15 +1,15 @@
-# Focusly
+# Focusly Desktop App
 
-A minimal, premium productivity app focused on deep work with smooth animations and maximum customization.
+A minimal, premium productivity app focused on deep work with smooth animations and a beautiful violet & cyan color palette.
 
 ## Features
 
 ### Pomodoro Timer
 
-- **Classic Mode**: 25/5/15 (work/break/long break)
-- **Deep Focus**: 50/10/20
-- **Ultra Focus**: 90/20/30
-- **Custom Mode**: Fully configurable durations
+- **Classic Mode** — 25/5/15 (work/break/long break)
+- **Deep Focus** — 50/10/20
+- **Ultra Focus** — 90/20/30
+- **Custom Mode** — Fully configurable durations
 - Configurable cycles before long break
 - Session presets
 - Local session history
@@ -17,25 +17,15 @@ A minimal, premium productivity app focused on deep work with smooth animations 
 ### Notifications & Alarms
 
 - Native system notifications
-- Configurable alarm sounds
+- Ring sound on session/break completion
+- Configurable notification volume
 - Visual feedback animations
-- Independent volume controls
 
 ### Personalization
 
 - Dark / Light theme
-- 8 accent color presets
-- 6 gradient backgrounds
+- Violet & Cyan color palette
 - Persistent preferences
-
-### Ambient Sounds
-
-- Rain
-- White Noise
-- Forest
-- Coffee Shop
-- Ocean Waves
-- Fireplace
 
 ### Animations (GSAP)
 
@@ -64,32 +54,30 @@ bun run build
 
 ## Keyboard Shortcuts
 
-- `Space` - Start/Pause timer
-- `Ctrl+R` - Reset timer
-- `Escape` - Close panels
+| Shortcut | Action            |
+| -------- | ----------------- |
+| `Space`  | Start/Pause timer |
+| `Ctrl+R` | Reset timer       |
+| `Escape` | Close panels      |
 
 ## Architecture
 
 ```
 src/
 ├── main/
-│   ├── main.js      # Electron main process
-│   └── preload.js   # IPC bridge
-└── renderer/
-    ├── index.html   # Main UI
-    ├── styles.css   # Styling
-    ├── app.js       # Main app logic
-    └── js/
-        ├── timer.js      # Pomodoro engine
-        ├── sounds.js     # Sound manager
-        ├── themes.js     # Theme manager
-        ├── animations.js # GSAP animations
-        └── store.js      # Persistent storage
+│   ├── main.js        # Electron main process
+│   └── preload.js     # IPC bridge
+├── renderer/
+│   ├── index.html     # Main UI
+│   ├── styles.css     # Styling
+│   └── app-simple.js  # Main app logic
+└── assets/
+    └── logo.png       # App logo
 ```
 
 ## Tech Stack
 
-- **Electron** - Desktop app framework
-- **GSAP** - Animation library
-- **Vanilla JS** - No framework overhead
-- **CSS Variables** - Dynamic theming
+- **Electron** — Desktop app framework
+- **GSAP** — Animation library
+- **Vanilla JS** — No framework overhead
+- **CSS Variables** — Dynamic theming
