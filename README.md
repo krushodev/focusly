@@ -142,15 +142,3 @@ bun build
 MIT License — feel free to use this project for personal or commercial purposes.
 
 ---
-
-## 🏷️ GitHub Description
-
-```
-🍅 Focusly — A minimalist Pomodoro timer for deep work. Built with Electron & Astro. Focus deeper, achieve more.
-```
-
-### Suggested Topics/Tags
-
-```
-pomodoro, timer, productivity, focus, electron, astro, tailwindcss, gsap, deep-work, time-management, desktop-app, javascript
-```
